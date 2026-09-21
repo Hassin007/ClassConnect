@@ -1,0 +1,188 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Django Project{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Theme & Global Form Styles -->
+    <style type="text/tailwindcss">
+        @layer base {
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="number"],
+            input[type="date"],
+            select,
+            textarea {
+                @apply w-full px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-custom-purple focus:border-transparent transition-all;
+            }
+            label {
+                @apply block mb-2 font-medium text-gray-700;
+            }
+        }
+    </style>
+
+    <!-- Additional Styling -->
+    <style>
+        .bg-custom-purple {
+            background-color: #6D28D9;
+        }
+        .text-custom-purple {
+            color: #6D28D9;
+        }
+        .hover\:bg-custom-purple:hover {
+            background-color: #5B21B6;
+        }
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
+        .navbar-gradient {
+            background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 100%);
+        }
+
+        @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .animate-fade-in-up {
+        animation: fade-in-up 0.7s ease-out both;
+    }
+    </style>
+
+    <script src="https://kit.fontawesome.com/4d129158f7.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    {% tailwind_css %}
+</head>
+<body class="bg-white text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 border-b border-purple-100">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <a href="{% if user.is_authenticated %}/classroom/{% else %}/{% endif %}" 
+                class="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-indigo-500 bg-clip-text text-transparent hover:brightness-110 transition-all duration-300">
+                    ClassConnect
+                </a>
+
+                {% if user.is_authenticated %}
+                <!-- Nav Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/classroom/" class="text-gray-700 font-medium px-4 py-2 rounded-full hover:bg-purple-100 hover:text-purple-700 transition-all duration-300">Classrooms</a>
+                    <a href="/classroom/tasks/" class="text-gray-700 font-medium px-4 py-2 rounded-full hover:bg-purple-100 hover:text-purple-700 transition-all duration-300">Tasks</a>
+                    <a href="/about-us/" class="text-gray-700 font-medium px-4 py-2 rounded-full hover:bg-purple-100 hover:text-purple-700 transition-all duration-300">About</a>
+                    <a href="/classroom/invitations/" class="text-gray-700 font-medium px-4 py-2 rounded-full hover:bg-purple-100 hover:text-purple-700 transition-all duration-300">Invitations</a>
+                </div>
+                {% endif %}
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="/users/logout/" class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold px-5 py-2 rounded-full shadow hover:shadow-lg hover:brightness-110 transition-all duration-300">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="/users/login/" class="text-gray-700 font-medium hover:text-purple-600 transition-all">Login</a>
+                        <a href="/users/register/" class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold px-5 py-2 rounded-full shadow hover:shadow-lg hover:brightness-110 transition-all duration-300">
+                            Sign Up
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="max-w-6xl mx-auto px-4 mt-4 space-y-3 animate-fade-in-up">
+            {% for message in messages %}
+                <div class="relative flex items-center justify-between px-5 py-4 rounded-xl shadow-lg text-white transition-all transform hover:scale-[1.02] duration-300 group
+                            {% if message.tags == 'success' %}
+                                bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500
+                            {% elif message.tags == 'error' %}
+                                bg-gradient-to-r from-red-500 via-rose-500 to-pink-500
+                            {% elif message.tags == 'warning' %}
+                                bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500
+                            {% else %}
+                                bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600
+                            {% endif %}">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-info-circle text-white text-lg"></i>
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+                    <button onclick="this.parentElement.remove();" class="text-white hover:text-gray-200 text-xl leading-none font-bold transition-opacity duration-200 opacity-80 hover:opacity-100">
+                        &times;
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="bg-gray-900 text-gray-300 mt-12 pt-12 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12">
+                <!-- Brand Info -->
+                <div>
+                    <h3 class="text-white text-2xl font-extrabold mb-3">ClassConnect</h3>
+                    <p class="text-sm leading-relaxed text-gray-400">
+                        Empowering classrooms with smart tools for collaboration, assignments, and growth. Built for students and teachers who want more from learning.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-semibold mb-3">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% if user.is_authenticated %}/classroom/{% else %}/users/login/?next=/classroom/{% endif %}" class="hover:text-white transition-all">Classrooms</a></li>
+                        <li><a href="{% if user.is_authenticated %}/classroom/tasks/{% else %}/users/login/?next=/classroom/tasks/{% endif %}" class="hover:text-white transition-all">Tasks</a></li>
+                        <li><a href="/about-us/" class="hover:text-white transition-all">About Us</a></li>
+                        <li><a href="{% if user.is_authenticated %}/classroom/invitations/{% else %}/users/login/?next=/classroom/invitations/{% endif %}" class="hover:text-white transition-all">Invitations</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h4 class="text-white font-semibold mb-3">Resources</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'help_center' %}" class="hover:text-white transition-all">Help Center</a></li>
+                        <li><a href="{% url 'privacy_policy' %}" class="hover:text-white transition-all">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms_of_service' %}" class="hover:text-white transition-all">Terms of Service</a></li>
+                        <li><a href="{% url 'documentation' %}" class="hover:text-white transition-all">Documentation</a></li>
+                    </ul>
+                </div>
+                <!-- Social Media -->
+                <div>
+                    <h4 class="text-white font-semibold mb-3">Follow Us</h4>
+                    <div class="flex space-x-4 mt-2">
+                        <a href="https://www.facebook.com/profile.php?id=100077438779105" class="text-gray-400 hover:text-white transition-all text-xl"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.reddit.com/user/Malik_Hashir/" target="_blank" class="text-gray-400 hover:text-white transition-all text-xl"><i class="fab fa-reddit-alien"></i></a>
+                        <a href="https://www.linkedin.com/in/malik-hashir-53a15a294/" class="text-gray-400 hover:text-white transition-all text-xl"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/itsmalikhashir/" class="text-gray-400 hover:text-white transition-all text-xl"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+            <div class="border-t border-gray-800 pt-6 text-center text-sm text-gray-500">
+                &copy; 2025 <span class="font-semibold text-white">ClassConnect</span>. Crafted with ❤️ for the future of learning.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

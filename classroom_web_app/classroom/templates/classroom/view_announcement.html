@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ announcement.title }} - ClassConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-r from-purple-50 to-white py-10 px-5">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold text-custom-purple mb-8">{{ announcement.title }}</h1>
+
+        <div class="bg-white p-8 rounded-xl shadow-lg">
+            <p class="text-gray-600 mb-6">{{ announcement.content }}</p>
+
+            {% if announcement.file %}
+            {% with announcement.file.name|lower as filename %}
+            {% with filename|slice:"-5:" as ext_5 %}
+            {% with filename|slice:"-4:" as ext_4 %}
+                <!-- File Preview Section -->
+                <div class="mt-8">
+                    <h2 class="text-2xl font-semibold text-custom-purple mb-4">Attached File</h2>
+
+                    <!-- File Preview -->
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-inner mb-4">
+                        <p class="text-gray-600 truncate">{{ announcement.file.name }}</p>
+
+                        <div class="my-4">
+                            {% if ext_4 == ".pdf" %}
+                                <iframe src="{{ announcement.file.url }}" class="w-full h-48 rounded-lg shadow-sm" style="border: 1px solid #ccc;"></iframe>
+                            {% elif ext_4 == ".doc" or ext_5 == ".docx" or ext_4 == ".ppt" or ext_5 == ".pptx" or ext_4 == ".xls" or ext_5 == ".xlsx" %}
+                                <iframe src="https://docs.google.com/gview?url={{ absolute_file_url }}&embedded=true"
+                                        class="w-full h-48 rounded-lg shadow-sm" style="border: 1px solid #ccc;"></iframe>
+                            {% else %}
+                                <div class="w-full h-48 rounded-lg flex items-center justify-center bg-white text-gray-600 border border-dashed border-gray-300">
+                                    ❗ Preview not available for this file type.
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex flex-col md:flex-row md:space-x-4 space-y-3 md:space-y-0 mt-4">
+                            {% if ext_4 == ".pdf" %}
+                                <a href="{{ announcement.file.url }}" target="_blank"
+                                   class="bg-white text-custom-purple border border-purple-300 font-semibold px-6 py-2 rounded-full shadow-md hover:bg-purple-50 hover:scale-105 transition-all text-center">
+                                    👁️ View File
+                                </a>
+                            {% elif ext_4 == ".doc" or ext_5 == ".docx" or ext_4 == ".ppt" or ext_5 == ".pptx" or ext_4 == ".xls" or ext_5 == ".xlsx" %}
+                                <a href="https://docs.google.com/gview?url={{ absolute_file_url }}&embedded=true" target="_blank"
+                                   class="bg-white text-custom-purple border border-purple-300 font-semibold px-6 py-2 rounded-full shadow-md hover:bg-purple-50 hover:scale-105 transition-all text-center">
+                                    👁️ View File
+                                </a>
+                            {% endif %}
+                            <a href="{{ announcement.file.url }}" download
+                               class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-semibold px-6 py-2 rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all text-center">
+                                📥 Download File
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+            {% endif %}
+
+            <div class="mt-6">
+                <p class="text-gray-500 text-sm">Posted by {{ announcement.created_by.username }} on {{ announcement.created_at|date:"M d, Y H:i" }}</p>
+            </div>
+
+            <!-- View Comments Button -->
+            <div class="mt-6">
+                <a href="{% url 'view_comments' 'announcement' announcement.id %}" 
+                   class="bg-custom-purple text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition shadow-md">
+                    View Comments
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
