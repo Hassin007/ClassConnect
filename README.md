@@ -125,5 +125,5 @@ Licensed under the **MIT License**.
 
 ---
 
-> Created with ❤️ by Malik Hashir Shakeel
+> Created with ❤️ by Malik Hashir Shakeel & Hassin
 
